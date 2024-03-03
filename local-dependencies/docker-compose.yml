@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: local_postgresql
+    restart: "unless-stopped"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  postgresql:
+  postgresql_data:

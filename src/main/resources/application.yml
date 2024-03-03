@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${DB_URL_CONNECTION:jdbc:postgresql://localhost:5432/billing_job_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
