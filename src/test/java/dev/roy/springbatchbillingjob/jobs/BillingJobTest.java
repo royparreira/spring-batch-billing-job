@@ -26,7 +26,8 @@ class BillingJobTest {
   void execute_shouldCompleteJobWithoutErrors() throws Exception {
 
     // given
-    JobParameters jobParameters = new JobParameters();
+    JobParameters jobParameters =
+        new JobParametersBuilder().addString("input.file", "/some/input/file").toJobParameters();
 
     // when
     JobExecution jobExecution = jobLauncher.run(billingJob, jobParameters);

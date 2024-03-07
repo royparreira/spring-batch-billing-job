@@ -23,6 +23,9 @@ public class BillingJob implements Job {
   public void execute(@NonNull JobExecution execution) {
 
     try {
+      JobParameters jobParameters = execution.getJobParameters();
+      String inputFileParameter = jobParameters.getString("input.file");
+      log.debug("Job parameters {}", jobParameters);
 
       billingService.processBill();
       execution.setStatus(BatchStatus.COMPLETED);
