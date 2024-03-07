@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 
 import dev.roy.springbatchbillingjob.service.BillingService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.core.*;
@@ -17,46 +18,52 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 class BillingJobTest {
 
-  @Autowired private JobLauncher jobLauncher;
-  @Autowired private Job billingJob;
+    @Autowired
+    private JobLauncher jobLauncher;
+    @Autowired
+    private Job billingJob;
 
-  @MockBean BillingService billingService;
+    @MockBean
+    BillingService billingService;
 
-  @Test
-  void execute_shouldCompleteJobWithoutErrors() throws Exception {
+    @Test
+    void execute_shouldCompleteJobWithoutErrors() throws Exception {
 
-    // given
-    JobParameters jobParameters =
-        new JobParametersBuilder().addString("input.file", "/some/input/file").toJobParameters();
+        // given
+        var randomJobParameterValue = RandomStringUtils.randomAlphanumeric(10);
 
-    // when
-    JobExecution jobExecution = jobLauncher.run(billingJob, jobParameters);
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("input.file", randomJobParameterValue)
+                .toJobParameters();
 
-    // then
-    assertAll(
-        () -> {
-          assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-          assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
-        });
-  }
+        // when
+        JobExecution jobExecution = jobLauncher.run(billingJob, jobParameters);
 
-  @Test
-  void execute_shouldFailIfThrowException() throws Exception {
-    final String failMessage = "Unable to process billing information";
+        // then
+        assertAll(
+                () -> {
+                    assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
+                    assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
+                });
+    }
 
-    // given
-    JobParameters jobParameters = new JobParameters();
-    ExitStatus failExitStatus = ExitStatus.FAILED.addExitDescription(failMessage);
+    @Test
+    void execute_shouldFailIfThrowException() throws Exception {
+        final String failMessage = "Unable to process billing information";
 
-    // when
-    doThrow(new RuntimeException(failMessage)).when(billingService).processBill();
-    JobExecution jobExecution = jobLauncher.run(billingJob, jobParameters);
+        // given
+        JobParameters jobParameters = new JobParameters();
+        ExitStatus failExitStatus = ExitStatus.FAILED.addExitDescription(failMessage);
 
-    // then
-    assertAll(
-        () -> {
-          assertEquals(failExitStatus, jobExecution.getExitStatus());
-          assertEquals(BatchStatus.FAILED, jobExecution.getStatus());
-        });
-  }
+        // when
+        doThrow(new RuntimeException(failMessage)).when(billingService).processBill();
+        JobExecution jobExecution = jobLauncher.run(billingJob, jobParameters);
+
+        // then
+        assertAll(
+                () -> {
+                    assertEquals(failExitStatus, jobExecution.getExitStatus());
+                    assertEquals(BatchStatus.FAILED, jobExecution.getStatus());
+                });
+    }
 }
