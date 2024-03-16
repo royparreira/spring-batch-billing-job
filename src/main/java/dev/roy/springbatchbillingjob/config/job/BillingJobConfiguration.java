@@ -11,7 +11,12 @@ import org.springframework.context.annotation.Configuration;
 public class BillingJobConfiguration {
 
   @Bean
-  public Job billingJob(JobRepository jobRepository, Step filePreparationStep) {
-    return new JobBuilder("BillingJob", jobRepository).start(filePreparationStep).build();
+  public Job billingJob(
+      JobRepository jobRepository, Step filePreparationStep, Step fileIngestionStep) {
+
+    return new JobBuilder("BillingJob", jobRepository)
+        .start(filePreparationStep)
+        .next(fileIngestionStep)
+        .build();
   }
 }

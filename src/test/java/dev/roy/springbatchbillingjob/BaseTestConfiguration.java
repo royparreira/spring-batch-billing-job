@@ -5,6 +5,7 @@ import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
@@ -19,4 +20,5 @@ import org.springframework.test.context.TestPropertySource;
 public abstract class BaseTestConfiguration {
   @Autowired protected ApplicationContext applicationContext;
   @Autowired protected JobLauncherTestUtils jobLauncherTestUtils;
+  @Autowired protected JdbcTemplate jdbcTemplate;
 }
