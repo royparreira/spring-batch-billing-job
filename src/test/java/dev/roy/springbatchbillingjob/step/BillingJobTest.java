@@ -54,6 +54,8 @@ class BillingJobTest extends BaseTestConfiguration {
             .addString("input.file", "src/main/resources/billing-2023-01.csv")
             .toJobParameters();
 
+    int currentRowCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "BILLING_DATA");
+
     // when
     AtomicReference<JobExecution> jobExecution = new AtomicReference<>();
 
@@ -74,7 +76,7 @@ class BillingJobTest extends BaseTestConfiguration {
 
           assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "BILLING_DATA"))
               .as("fileIngestion step should copy from csv file into BILLING_DATA table")
-              .isEqualTo(1_000);
+              .isEqualTo(currentRowCount + 1_000);
         });
   }
 }
